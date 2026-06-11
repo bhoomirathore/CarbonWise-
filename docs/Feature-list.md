@@ -1,0 +1,527 @@
+# CarbonWise - Feature Ticket List
+
+## Epic 1: Project Foundation
+
+### Ticket FW-001: Initialize Application Architecture
+
+Priority: MUST-HAVE
+
+Description:
+Create the foundational Next.js application using TypeScript, Tailwind CSS, shadcn/ui, and Supabase integration. Establish folder structure, routing, shared layouts, reusable components, and environment variable configuration.
+
+Acceptance Criteria:
+
+* Next.js App Router configured
+* TypeScript configured
+* Tailwind CSS configured
+* shadcn/ui installed
+* Supabase client configured
+* Responsive layout component created
+* Navigation component created
+* Environment variables configured
+* Application successfully deploys to Vercel
+
+Dependencies:
+None
+
+---
+
+### Ticket FW-002: Create Design System
+
+Priority: MUST-HAVE
+
+Description:
+Create a consistent design system including typography, spacing, colors, buttons, cards, charts, forms, and accessibility standards.
+
+Acceptance Criteria:
+
+* Reusable button components created
+* Reusable card components created
+* Form field components created
+* Consistent color palette defined
+* Mobile responsive breakpoints implemented
+* Accessible color contrast verified
+
+Dependencies:
+FW-001
+
+---
+
+## Epic 2: Landing Experience
+
+### Ticket LP-001: Build Landing Page
+
+Priority: MUST-HAVE
+
+Description:
+Create a homepage that introduces CarbonWise, explains the value proposition, and guides users to begin the carbon assessment.
+
+Acceptance Criteria:
+
+* Hero section created
+* Product description section created
+* How CarbonWise Works section created
+* Call-to-action button created
+* Mobile responsive layout
+* Accessible navigation
+
+Dependencies:
+FW-001
+FW-002
+
+---
+
+## Epic 3: Carbon Assessment
+
+### Ticket AS-001: Build Multi-Step Assessment Flow
+
+Priority: MUST-HAVE
+
+Description:
+Create a multi-step questionnaire that collects user lifestyle information across transportation, energy, food, and waste categories.
+
+Acceptance Criteria:
+
+* Transportation section implemented
+* Energy section implemented
+* Food section implemented
+* Waste section implemented
+* Progress indicator visible
+* Previous and Next navigation implemented
+* Input validation implemented
+* Assessment completion state implemented
+
+Dependencies:
+FW-001
+FW-002
+
+---
+
+### Ticket AS-002: Store Assessment Responses
+
+Priority: MUST-HAVE
+
+Description:
+Persist assessment responses and prepare data for carbon calculations.
+
+Acceptance Criteria:
+
+* Assessment data structure defined
+* Responses captured correctly
+* Assessment state persists between steps
+* Final submission object generated
+
+Dependencies:
+AS-001
+
+---
+
+## Epic 4: Carbon Calculation Engine
+
+### Ticket CE-001: Build Carbon Calculation Engine
+
+Priority: MUST-HAVE
+
+Description:
+Create business logic that converts assessment responses into estimated carbon emissions.
+
+Acceptance Criteria:
+
+* Transportation emissions calculated
+* Energy emissions calculated
+* Food emissions calculated
+* Waste emissions calculated
+* Total carbon footprint calculated
+* Category-level emissions returned
+* Calculation utilities isolated from UI
+
+Dependencies:
+AS-002
+
+---
+
+### Ticket CE-002: Build CarbonWise Score Engine
+
+Priority: MUST-HAVE
+
+Description:
+Generate a CarbonWise Score between 0 and 100 based on the user's footprint and lifestyle choices.
+
+Acceptance Criteria:
+
+* Score generation logic implemented
+* Score consistently calculated
+* Score returned with assessment results
+* Edge cases handled
+
+Dependencies:
+CE-001
+
+---
+
+## Epic 5: Dashboard
+
+### Ticket DB-001: Build Dashboard Overview
+
+Priority: MUST-HAVE
+
+Description:
+Create the primary dashboard displaying emissions summary and CarbonWise Score.
+
+Acceptance Criteria:
+
+* Total footprint displayed
+* CarbonWise Score displayed
+* Category breakdown displayed
+* Dashboard responsive on mobile
+* Loading and error states handled
+
+Dependencies:
+CE-001
+CE-002
+
+---
+
+### Ticket DB-002: Build Emissions Visualization
+
+Priority: MUST-HAVE
+
+Description:
+Create visual representations of emission sources using charts.
+
+Acceptance Criteria:
+
+* Pie chart implemented
+* Category contribution displayed
+* Chart labels implemented
+* Mobile responsiveness verified
+
+Dependencies:
+DB-001
+
+---
+
+## Epic 6: Personalized Insights
+
+### Ticket PI-001: Build Recommendation Rule Engine
+
+Priority: MUST-HAVE
+
+Description:
+Create a rules-based engine that generates recommendations based on assessment results.
+
+Acceptance Criteria:
+
+* High transport emissions trigger transport recommendations
+* High energy emissions trigger energy recommendations
+* High food emissions trigger food recommendations
+* High waste emissions trigger waste recommendations
+* Multiple recommendations supported
+
+Dependencies:
+CE-001
+
+---
+
+### Ticket PI-002: Build Insights Page
+
+Priority: MUST-HAVE
+
+Description:
+Display personalized recommendations generated by the recommendation engine.
+
+Acceptance Criteria:
+
+* Recommendations displayed clearly
+* Estimated impact shown
+* Recommendation category displayed
+* Reasoning shown for each recommendation
+
+Dependencies:
+PI-001
+
+---
+
+## Epic 7: What-If Simulator
+
+### Ticket WS-001: Build Scenario Simulation Engine
+
+Priority: MUST-HAVE
+
+Description:
+Create logic that recalculates emissions based on hypothetical lifestyle changes.
+
+Acceptance Criteria:
+
+* User can modify transport behavior
+* User can modify energy behavior
+* User can modify food behavior
+* Updated emissions calculated
+* Reduction amount calculated
+
+Dependencies:
+CE-001
+
+---
+
+### Ticket WS-002: Build What-If Simulator Interface
+
+Priority: MUST-HAVE
+
+Description:
+Create a user interface for selecting lifestyle changes and viewing projected impact.
+
+Acceptance Criteria:
+
+* Scenario controls implemented
+* Results update dynamically
+* New footprint displayed
+* Estimated reduction displayed
+* Updated CarbonWise Score displayed
+
+Dependencies:
+WS-001
+
+---
+
+## Epic 8: Learn Hub
+
+### Ticket LH-001: Build Learn Hub Landing Page
+
+Priority: MUST-HAVE
+
+Description:
+Create an educational hub that helps users understand carbon footprints and sustainability concepts.
+
+Acceptance Criteria:
+
+* Learn Hub page created
+* Educational topics listed
+* Topic navigation implemented
+* Mobile responsive design
+
+Dependencies:
+FW-002
+
+---
+
+### Ticket LH-002: Create Carbon Footprint Basics Content
+
+Priority: MUST-HAVE
+
+Description:
+Create educational content explaining carbon footprints and environmental impact.
+
+Acceptance Criteria:
+
+* What is Carbon Footprint section created
+* Why It Matters section created
+* How It Is Calculated section created
+* Sources of Emissions section created
+
+Dependencies:
+LH-001
+
+---
+
+## Epic 9: Myth Busters
+
+### Ticket MB-001: Build Myth Busters Experience
+
+Priority: MUST-HAVE
+
+Description:
+Create an educational section that presents common sustainability myths and factual explanations.
+
+Acceptance Criteria:
+
+* Myth cards created
+* Reality explanations created
+* Responsive layout implemented
+* Accessible interaction patterns implemented
+
+Dependencies:
+LH-001
+
+---
+
+### Ticket MB-002: Populate Myth Library
+
+Priority: MUST-HAVE
+
+Description:
+Create initial myth dataset for the application.
+
+Acceptance Criteria:
+
+* Minimum 10 myths created
+* Each myth includes explanation
+* Data stored in reusable structure
+
+Dependencies:
+MB-001
+
+---
+
+## Epic 10: Authentication
+
+### Ticket AU-001: Implement Supabase Authentication
+
+Priority: SHOULD-HAVE
+
+Description:
+Allow users to sign in and save assessment results.
+
+Acceptance Criteria:
+
+* Sign in implemented
+* Sign out implemented
+* Session persistence implemented
+* Protected routes configured
+
+Dependencies:
+FW-001
+
+---
+
+### Ticket AU-002: Save User Assessments
+
+Priority: SHOULD-HAVE
+
+Description:
+Store completed assessments for authenticated users.
+
+Acceptance Criteria:
+
+* Assessment saved successfully
+* User-specific records retrieved
+* Data isolation enforced
+
+Dependencies:
+AU-001
+AS-002
+
+---
+
+## Epic 11: Accessibility
+
+### Ticket AC-001: Accessibility Compliance Pass
+
+Priority: MUST-HAVE
+
+Description:
+Ensure the application is accessible to all users.
+
+Acceptance Criteria:
+
+* Keyboard navigation supported
+* Semantic HTML used
+* ARIA labels added where necessary
+* Color contrast verified
+* Focus states visible
+
+Dependencies:
+All UI features
+
+---
+
+## Epic 12: Testing
+
+### Ticket TS-001: Carbon Calculation Tests
+
+Priority: MUST-HAVE
+
+Description:
+Create automated tests for emission calculations.
+
+Acceptance Criteria:
+
+* Transport calculations tested
+* Energy calculations tested
+* Food calculations tested
+* Waste calculations tested
+* Total footprint calculations tested
+
+Dependencies:
+CE-001
+
+---
+
+### Ticket TS-002: Recommendation Engine Tests
+
+Priority: MUST-HAVE
+
+Description:
+Create tests validating recommendation generation.
+
+Acceptance Criteria:
+
+* Recommendation rules tested
+* Edge cases tested
+* Multiple recommendation scenarios tested
+
+Dependencies:
+PI-001
+
+---
+
+### Ticket TS-003: Assessment Flow Tests
+
+Priority: MUST-HAVE
+
+Description:
+Verify assessment flow works correctly.
+
+Acceptance Criteria:
+
+* Navigation tested
+* Validation tested
+* Submission tested
+* Completion state tested
+
+Dependencies:
+AS-001
+
+---
+
+## Epic 13: Deployment
+
+### Ticket DP-001: Production Deployment
+
+Priority: MUST-HAVE
+
+Description:
+Deploy CarbonWise to production using Vercel.
+
+Acceptance Criteria:
+
+* Production environment configured
+* Environment variables configured
+* Successful deployment completed
+* No critical console errors
+
+Dependencies:
+All MVP features
+
+---
+
+### Ticket DP-002: Final Performance Review
+
+Priority: MUST-HAVE
+
+Description:
+Perform final optimization and launch readiness review.
+
+Acceptance Criteria:
+
+* Lighthouse audit completed
+* Mobile responsiveness verified
+* Accessibility verified
+* Performance issues resolved
+
+Dependencies:
+DP-001
+AC-001
+TS-001
+TS-002
+TS-003
