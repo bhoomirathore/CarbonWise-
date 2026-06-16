@@ -1,0 +1,13 @@
+-- Alter assessments table to add Sprint 2 fields
+ALTER TABLE public.assessments
+ADD COLUMN IF NOT EXISTS transport_type TEXT,
+ADD COLUMN IF NOT EXISTS transport_distance NUMERIC,
+ADD COLUMN IF NOT EXISTS energy_usage TEXT,
+ADD COLUMN IF NOT EXISTS diet_type TEXT,
+ADD COLUMN IF NOT EXISTS waste_habit TEXT,
+ADD COLUMN IF NOT EXISTS total_score NUMERIC,
+ADD COLUMN IF NOT EXISTS transport_score NUMERIC,
+ADD COLUMN IF NOT EXISTS energy_score NUMERIC,
+ADD COLUMN IF NOT EXISTS diet_score NUMERIC,
+ADD COLUMN IF NOT EXISTS waste_score NUMERIC,
+ADD COLUMN IF NOT EXISTS impact_level TEXT;

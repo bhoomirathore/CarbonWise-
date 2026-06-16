@@ -8,15 +8,21 @@ export interface UserProfile {
 
 export interface Assessment {
   id: string;
-  userId: string;
-  createdAt: string;
-  // Future sprint scores (optional for now)
-  transportScore?: number;
-  energyScore?: number;
-  foodScore?: number;
-  wasteScore?: number;
-  totalEmissions?: number;
-  carbonwiseScore?: number;
+  user_id: string;
+  created_at: string;
+  
+  transport_type: string;
+  transport_distance: number;
+  energy_usage: string;
+  diet_type: string;
+  waste_habit: string;
+  
+  total_score: number;
+  transport_score: number;
+  energy_score: number;
+  diet_score: number;
+  waste_score: number;
+  impact_level: string;
 }
 
 export interface AuthState {
