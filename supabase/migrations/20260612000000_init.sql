@@ -9,18 +9,21 @@ CREATE TABLE IF NOT EXISTS public.assessments (
 ALTER TABLE public.assessments ENABLE ROW LEVEL SECURITY;
 
 -- Configure RLS policies for owner access only
+DROP POLICY IF EXISTS "Users can read their own assessments" ON public.assessments;
 CREATE POLICY "Users can read their own assessments"
     ON public.assessments
     FOR SELECT
     TO authenticated
     USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can insert their own assessments" ON public.assessments;
 CREATE POLICY "Users can insert their own assessments"
     ON public.assessments
     FOR INSERT
     TO authenticated
     WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can update their own assessments" ON public.assessments;
 CREATE POLICY "Users can update their own assessments"
     ON public.assessments
     FOR UPDATE
@@ -28,6 +31,7 @@ CREATE POLICY "Users can update their own assessments"
     USING (auth.uid() = user_id)
     WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can delete their own assessments" ON public.assessments;
 CREATE POLICY "Users can delete their own assessments"
     ON public.assessments
     FOR DELETE

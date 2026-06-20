@@ -19,15 +19,23 @@ import {
   Leaf
 } from 'lucide-react';
 
+import { generateInsights } from '@/lib/insightsEngine';
+import { getRankedContributors, getLargestContributor } from '@/lib/contributorUtils';
+
 export default function DashboardPage() {
   const [assessments, setAssessments] = useState<Assessment[]>([]);
+  const [assessmentCount, setAssessmentCount] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const fetchHistory = async (uid: string) => {
     try {
-      const records = await assessmentService.getUserAssessments(uid);
+      const [records, count] = await Promise.all([
+        assessmentService.getUserAssessments(uid),
+        assessmentService.getUserAssessmentCount(uid)
+      ]);
       setAssessments(records);
+      setAssessmentCount(count);
     } catch (err) {
       console.error(err);
       const msg = err instanceof Error ? err.message : 'Unable to retrieve your assessment history.';
@@ -51,7 +59,7 @@ export default function DashboardPage() {
   const getImpactBadgeStyles = (level: string) => {
     const l = (level || '').toLowerCase().trim();
     if (l === 'low') {
-      return 'bg-emerald-50 text-primary border-emerald-100';
+      return 'bg-emerald-50 text-emerald-800 border-emerald-100';
     } else if (l === 'moderate') {
       return 'bg-amber-50 text-amber-800 border-amber-100';
     } else if (l === 'high') {
@@ -60,6 +68,19 @@ export default function DashboardPage() {
       return 'bg-red-50 text-red-800 border-red-100';
     }
   };
+
+  const latest = assessments[0];
+  const latestScore = latest ? (latest.total_score || 0) : 0;
+  const latestImpact = latest ? (latest.impact_level || 'None') : 'None';
+
+  // Run inline (no useMemo)
+  const latestInsights = latest ? generateInsights(
+    Number(latest.transport_score || 0),
+    Number(latest.energy_score || 0),
+    Number(latest.diet_score || 0),
+    Number(latest.waste_score || 0)
+  ) : null;
+  const biggestContributor = latestInsights ? latestInsights.largestContributor : 'None';
 
   return (
     <AuthGuard>
@@ -121,57 +142,156 @@ export default function DashboardPage() {
           ) : (
             /* Historical Logs Grid */
             <div className="space-y-6">
+              {/* Summary Cards Grid */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <Card className="border-border p-5 bg-white shadow-sm flex flex-col justify-between min-h-[100px]">
+                  <span className="text-xs font-bold uppercase text-slate-400 block mb-1">Latest Score</span>
+                  <span className="text-2xl font-black text-foreground">{latestScore} <span className="text-xs text-slate-400 font-medium">/ 210</span></span>
+                </Card>
+                <Card className="border-border p-5 bg-white shadow-sm flex flex-col justify-between min-h-[100px]">
+                  <span className="text-xs font-bold uppercase text-slate-400 block mb-1">Impact Level</span>
+                  <span className={`inline-block px-2.5 py-0.5 mt-1 rounded-full text-xs font-bold border ${getImpactBadgeStyles(latestImpact)}`}>
+                    {latestImpact}
+                  </span>
+                </Card>
+                <Card className="border-border p-5 bg-white shadow-sm flex flex-col justify-between min-h-[100px]">
+                  <span className="text-xs font-bold uppercase text-slate-400 block mb-1">Assessments Count</span>
+                  <span className="text-2xl font-black text-foreground">{assessmentCount}</span>
+                </Card>
+                <Card className="border-border p-5 bg-white shadow-sm flex flex-col justify-between min-h-[100px]">
+                  <span className="text-xs font-bold uppercase text-slate-400 block mb-1">Biggest Contributor</span>
+                  <span className="text-lg font-black text-foreground mt-1 block truncate">{biggestContributor}</span>
+                </Card>
+              </div>
+
+              {/* Quick Insights & Historical Improvement */}
+              <Card className="border-border p-6 bg-white shadow-sm border-l-4 border-l-primary">
+                <h3 className="text-sm font-bold uppercase tracking-wide text-slate-400 mb-3">Quick Insights</h3>
+                <div className="space-y-2 text-sm font-medium text-slate-600">
+                  {(() => {
+                    if (biggestContributor === 'None') {
+                      return (
+                        <p className="flex items-start space-x-2">
+                          <span className="w-1.5 h-1.5 rounded-full bg-secondary shrink-0 mt-1.5" />
+                          <span>Awesome job! You currently have no emission contributors. You are leading a highly sustainable lifestyle!</span>
+                        </p>
+                      );
+                    }
+                    const categoryTips: Record<string, string> = {
+                      Transportation: "Transportation contributes the largest share of your footprint. Small changes in travel habits, like using public transit or carpooling, could have the biggest impact on reducing your emissions.",
+                      Energy: "Energy use at home contributes the largest share of your footprint. Simple adjustments like modifying heating, cooling, or lighting can make a big difference in reducing electricity consumption.",
+                      Diet: "Your dietary choices contribute the largest share of your footprint. Swapping heavy meat options for plant-based alternatives is a powerful way to lower your daily impact.",
+                      Waste: "Waste habits contribute the largest share of your footprint. Mindful purchasing and consistent recycling are highly effective ways to minimize landfill waste."
+                    };
+                    const tip = categoryTips[biggestContributor] || "Every positive step towards sustainable habits makes a difference.";
+                    return (
+                      <p className="flex items-start space-x-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-secondary shrink-0 mt-1.5" />
+                        <span>{tip}</span>
+                      </p>
+                    );
+                  })()}
+                  {assessments.length >= 2 ? (() => {
+                    const diff = Number(assessments[1].total_score || 0) - Number(assessments[0].total_score || 0);
+                    if (diff > 0) {
+                      return (
+                        <p className="flex items-start space-x-2">
+                          <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0 mt-1.5" />
+                          <span className="text-primary font-bold">Great progress! Your footprint score decreased by {diff} points compared to your previous assessment.</span>
+                        </p>
+                      );
+                    } else if (diff < 0) {
+                      return (
+                        <p className="flex items-start space-x-2">
+                          <span className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0 mt-1.5" />
+                          <span>Your footprint score increased by {Math.abs(diff)} points compared to your previous assessment. Let&apos;s check out the recommendations to get back on track!</span>
+                        </p>
+                      );
+                    } else {
+                      return (
+                        <p className="flex items-start space-x-2">
+                          <span className="w-1.5 h-1.5 rounded-full bg-slate-400 shrink-0 mt-1.5" />
+                          <span>Your footprint score is unchanged since your last assessment. Small steps can lead to a bigger reduction next time!</span>
+                        </p>
+                      );
+                    }
+                  })() : (
+                    <p className="flex items-start space-x-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-slate-400 shrink-0 mt-1.5" />
+                      <span>Complete a second assessment in the future to track your footprint changes and improvement history!</span>
+                    </p>
+                  )}
+                </div>
+              </Card>
+
+              {/* Recent Assessments History Card */}
               <div className="bg-white border border-border rounded-2xl shadow-sm overflow-hidden">
                 <div className="px-6 py-4 border-b border-border bg-slate-50/50">
                   <h3 className="text-base font-bold text-foreground">Recent Assessments</h3>
                   <p className="text-xs text-slate-400">Displaying your latest 10 assessments</p>
                 </div>
                 <div className="divide-y divide-border">
-                  {assessments.map((item) => (
-                    <div 
-                      key={item.id} 
-                      className="px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 hover:bg-slate-50/50 transition-colors"
-                    >
-                      <div className="flex items-center space-x-4">
-                        <div className="p-2 bg-emerald-50 rounded-xl text-secondary">
-                          <Calendar className="h-5 w-5" />
-                        </div>
-                        <div className="space-y-1">
-                          <p className="text-sm font-semibold text-foreground">
-                            {new Date(item.created_at).toLocaleDateString('en-US', {
-                              year: 'numeric',
-                              month: 'long',
-                              day: 'numeric',
-                              hour: '2-digit',
-                              minute: '2-digit'
-                            })}
-                          </p>
-                          <div className="flex flex-wrap gap-2 text-xs">
-                            <span className="text-slate-500 font-medium">Transit: {item.transport_type}</span>
-                            <span className="text-slate-300">•</span>
-                            <span className="text-slate-500 font-medium">Diet: {item.diet_type}</span>
-                          </div>
-                        </div>
-                      </div>
+                  {assessments.map((item) => {
+                    const itemRanked = getRankedContributors(
+                      Number(item.transport_score || 0),
+                      Number(item.energy_score || 0),
+                      Number(item.diet_score || 0),
+                      Number(item.waste_score || 0)
+                    );
+                    const itemLargest = getLargestContributor(itemRanked);
+                    const itemContributor = itemLargest ? itemLargest.category : 'None';
 
-                      <div className="flex items-center justify-between sm:justify-end gap-6">
-                        <div className="text-right sm:text-left space-y-1">
-                          <div className="flex items-baseline space-x-1 justify-end sm:justify-start">
-                            <span className="text-lg font-bold text-foreground">{item.total_score}</span>
-                            <span className="text-xs text-slate-400">/ 210</span>
+                    return (
+                      <div 
+                        key={item.id} 
+                        className="px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 hover:bg-slate-50/50 transition-colors"
+                      >
+                        <div className="flex items-center space-x-4">
+                          <div className="p-2 bg-emerald-50 rounded-xl text-secondary">
+                            <Calendar className="h-5 w-5" />
                           </div>
-                          <span className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-bold border ${getImpactBadgeStyles(item.impact_level)}`}>
-                            {item.impact_level}
-                          </span>
+                          <div className="space-y-1">
+                            <p className="text-sm font-semibold text-foreground">
+                              {item.created_at ? new Date(item.created_at).toLocaleDateString('en-US', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                              }) : 'Unknown Date'}
+                            </p>
+                            <div className="flex flex-wrap gap-2 text-xs">
+                              <span className="text-slate-500 font-medium">Transit: {item.transport_type || 'Unknown'}</span>
+                              <span className="text-slate-300">•</span>
+                              <span className="text-slate-500 font-medium">Diet: {item.diet_type || 'Unknown'}</span>
+                            </div>
+                          </div>
                         </div>
-                        <Link href={`/results?id=${item.id}`}>
-                          <button className="p-2 text-slate-400 hover:text-primary hover:bg-slate-50 rounded-lg border border-transparent hover:border-border transition-all">
-                            <ChevronRight className="h-5 w-5" />
-                          </button>
-                        </Link>
+
+                        <div className="flex items-center justify-between sm:justify-end gap-6">
+                          <div className="text-right sm:text-left space-y-1">
+                            <div className="flex items-baseline space-x-1 justify-end sm:justify-start">
+                              <span className="text-lg font-bold text-foreground">{item.total_score || 0}</span>
+                              <span className="text-xs text-slate-400">/ 210</span>
+                            </div>
+                            <div className="flex items-center space-x-2 justify-end sm:justify-start">
+                              <span className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${getImpactBadgeStyles(item.impact_level || 'Low')}`}>
+                                {item.impact_level || 'Low'}
+                              </span>
+                              <span className="text-[10px] text-slate-400 font-bold uppercase">
+                                Top: {itemContributor}
+                              </span>
+                            </div>
+                          </div>
+                          <Link href={`/results?id=${item.id}`}>
+                            <button className="p-2 text-slate-400 hover:text-primary hover:bg-slate-50 rounded-lg border border-transparent hover:border-border transition-all">
+                              <ChevronRight className="h-5 w-5" />
+                            </button>
+                          </Link>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             </div>

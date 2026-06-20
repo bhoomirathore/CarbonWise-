@@ -64,5 +64,24 @@ export const assessmentService = {
     }
 
     return (records || []) as Assessment[];
+  },
+
+  /**
+   * Returns the total count of assessments for a user.
+   */
+  async getUserAssessmentCount(userId: string): Promise<number> {
+    if (!userId) return 0;
+
+    const { count, error } = await supabase
+      .from('assessments')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', userId);
+
+    if (error) {
+      console.error('Error in getUserAssessmentCount:', error);
+      return 0;
+    }
+
+    return count || 0;
   }
 };
