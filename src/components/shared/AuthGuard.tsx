@@ -9,6 +9,15 @@ interface AuthGuardProps {
   children: React.ReactNode;
 }
 
+/**
+ * NOTE ON SECURITY MODEL (Current Implementation):
+ * AuthGuard provides client-side route UX only (redirecting unauthenticated users to the login page).
+ * Actual data protection is enforced server-side via Supabase Row Level Security (RLS) on database tables
+ * (such as the `assessments` table), which are scoped using `auth.uid() = user_id`.
+ * 
+ * This is the current implementation and is not meant to represent a fully "secure by design" end state.
+ * Transitioning to a server-side session check via Next.js Middleware is a known future improvement.
+ */
 export const AuthGuard: React.FC<AuthGuardProps> = ({ children }) => {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
