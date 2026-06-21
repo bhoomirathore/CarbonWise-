@@ -8,7 +8,6 @@ import { User } from '@supabase/supabase-js';
 import { 
   LayoutDashboard, 
   ClipboardList, 
-  Lightbulb, 
   Activity, 
   BookOpen, 
   User as UserIcon, 
@@ -55,7 +54,6 @@ export const Navigation: React.FC = () => {
   const navItems: NavItem[] = [
     { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
     { label: 'Assessment', href: '/assessment', icon: ClipboardList },
-    { label: 'Insights', href: '/insights', icon: Lightbulb },
     { label: 'Simulator', href: '/simulator', icon: Activity },
     { label: 'Learn', href: '/learn', icon: BookOpen },
     { label: 'Profile', href: '/profile', icon: UserIcon },
