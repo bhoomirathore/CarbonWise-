@@ -1,22 +1,10 @@
 # CarbonWise 🌱
 
-> Understand Your Impact. Track Your Progress. Build a Greener Future.
+> Understand your impact. Track your progress. Build a greener future.
 
-CarbonWise is an AI-powered sustainability platform that helps individuals understand, track, and reduce their carbon footprint through activity tracking, personalized insights, and actionable recommendations. The platform transforms everyday lifestyle choices into measurable environmental impact data, empowering users to make informed decisions that contribute to a more sustainable future.
+CarbonWise is a sustainability platform that helps individuals understand, track, and reduce their carbon footprint through a guided assessment, personalized recommendations, and a what-if simulator.
 
----
-
-## 📖 Overview
-
-Climate change is influenced by millions of daily decisions made by individuals. However, most people struggle to understand how their lifestyle choices impact the environment.
-
-CarbonWise bridges this gap by providing:
-
-- Carbon footprint calculation
-- Activity-based emissions tracking
-- Personalized sustainability recommendations
-- Progress monitoring and analytics
-- Environmental awareness through data visualization
+Built for PromptWars Challenge 3.
 
 ---
 
@@ -28,159 +16,88 @@ Design a solution that helps individuals understand, track, and reduce their car
 
 ## ✨ Features
 
-### 📊 Carbon Footprint Calculator
+### 📊 Carbon Footprint Assessment
+Calculates a footprint score from five lifestyle inputs: transport type, weekly transport distance, energy usage, diet type, and waste habits.
 
-Calculate emissions generated from:
+### 📈 Insights Dashboard
+Ranks which category (Transportation, Energy, Diet, Waste) contributes most to your footprint, with a category-by-category breakdown and trend view across past assessments.
 
-- Transportation
-- Electricity consumption
-- Food habits
-- Waste generation
-- Daily lifestyle activities
+### 💡 Personalized Recommendations
+Generates 3–5 prioritized, actionable suggestions based on your specific answers and your largest-contributing category.
 
-### 🤖 AI-Powered Insights
+### 🎮 What-If Simulator
+Lets you adjust your inputs and see how your score and impact level would change before committing to real changes.
 
-Receive personalized recommendations based on:
-
-- User behavior
-- Emission patterns
-- Sustainability goals
-- Historical activity data
-
-### 📈 Analytics Dashboard
-
-Track:
-
-- Daily emissions
-- Weekly trends
-- Monthly reports
-- Carbon reduction progress
-- Sustainability score
-
-### 🎯 Goal Setting
-
-- Set carbon reduction targets
-- Track milestones
-- Monitor achievements
-
-### 🏆 Gamification
-
-- Eco badges
-- Achievement system
-- Progress streaks
-- Sustainability challenges
+### 🏆 Achievements
+Unlocks badges for assessment milestones (first assessment, 3 assessments) and for reaching low-footprint score thresholds.
 
 ### 📱 Responsive Design
-
-Accessible on:
-
-- Desktop
-- Tablet
-- Mobile devices
-
----
-
-## ⚙️ How It Works
-
-```text
-User Activity Input
-          │
-          ▼
-Carbon Calculation Engine
-          │
-          ▼
-Emission Analysis
-          │
-          ▼
-AI Recommendation Engine
-          │
-          ▼
-Dashboard & Insights
-          │
-          ▼
-Progress Tracking
-```
-
----
-
-## 🏗️ System Architecture
-
-```text
-Frontend (React / Next.js)
-            │
-            ▼
-REST API / Backend Services
-            │
-            ▼
-Business Logic Layer
-            │
-    ┌───────┴────────┐
-    ▼                ▼
-Carbon Engine     AI Engine
-    │                │
-    └───────┬────────┘
-            ▼
-      Database Layer
-```
+Built with Tailwind CSS for desktop, tablet, and mobile.
 
 ---
 
 ## 💻 Tech Stack
 
-### Frontend
-- React.js / Next.js
-- TypeScript
-- Tailwind CSS
-- Chart.js / Recharts
+- **Framework:** Next.js 16 (App Router), React 19, TypeScript (strict mode)
+- **Styling:** Tailwind CSS
+- **Charts:** Recharts
+- **Backend / Database:** Supabase (PostgreSQL with Row Level Security)
+- **Authentication:** Supabase Auth — Google OAuth and email magic link (no passwords stored or handled directly)
+- **Testing:** Vitest, with unit tests and coverage reporting for the core scoring and recommendation logic
+- **Icons:** Lucide React
 
-### Backend
-- Node.js
-- Express.js
+---
 
-### Database
-- MongoDB Atlas
+## 🏗️ How It Works
 
-### Authentication
-- JWT Authentication
+```text
+User completes assessment (5 inputs)
+            │
+            ▼
+  Rule-based scoring engine
+  (carbonCalculator.ts)
+            │
+            ▼
+  Category ranking + insights
+  (contributorUtils.ts, insightsEngine.ts)
+            │
+            ▼
+  Personalized recommendations
+  (recommendationEngine.ts)
+            │
+            ▼
+  Dashboard, achievements, and
+  progress tracking over time
+```
 
-### AI Layer
-- OpenAI API / Gemini API
-
-### Deployment
-- Vercel
-- Render / Railway
+The scoring and recommendation logic is deterministic, rule-based TypeScript — not a machine learning model. "Personalized" refers to results being computed from the user's own specific inputs and assessment history, not generic content.
 
 ---
 
 ## 📂 Project Structure
 
 ```text
-CarbonWise/
-│
-├── frontend/
-│   ├── public/
-│   ├── src/
-│   │   ├── components/
-│   │   ├── pages/
-│   │   ├── hooks/
-│   │   ├── services/
-│   │   └── utils/
-│
-├── backend/
-│   ├── controllers/
-│   ├── routes/
-│   ├── middleware/
-│   ├── models/
-│   ├── services/
-│   └── config/
-│
-├── docs/
-│
-├── .env.example
-├── .gitignore
-├── LICENSE
-├── README.md
-│
+CarbonWise-/
+├── src/
+│   ├── app/                # Next.js App Router pages
+│   │   ├── assessment/
+│   │   ├── auth/
+│   │   ├── dashboard/
+│   │   ├── learn/
+│   │   ├── profile/
+│   │   ├── results/
+│   │   └── simulator/
+│   ├── components/
+│   │   ├── charts/
+│   │   ├── shared/          # Navigation, AuthGuard, etc.
+│   │   └── ui/
+│   ├── lib/                 # Core scoring, recommendation, and insight logic
+│   │   └── __tests__/       # Vitest unit tests
+│   ├── services/            # Supabase data access
+│   └── types/
+├── supabase/
+│   └── migrations/          # SQL schema and RLS policies
+├── docs/                    # Planning documents (PRD, specs)
 └── package.json
 ```
 
@@ -188,122 +105,63 @@ CarbonWise/
 
 ## 🚀 Getting Started
 
-### Clone the Repository
-
+### Clone the repository
 ```bash
-git clone https://github.com/your-username/CarbonWise.git
-cd CarbonWise
+git clone https://github.com/bhoomirathore/CarbonWise-.git
+cd CarbonWise-
 ```
 
-### Install Dependencies
-
-Frontend:
-
+### Install dependencies
 ```bash
-cd frontend
 npm install
 ```
 
-Backend:
-
-```bash
-cd backend
-npm install
+### Set up environment variables
+Create a `.env.local` file in the project root:
+```env
+NEXT_PUBLIC_SUPABASE_URL=your-supabase-project-url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
 ```
+You'll need a Supabase project with the migrations in `supabase/migrations/` applied.
 
-### Run Development Server
-
-Frontend:
-
+### Run the development server
 ```bash
 npm run dev
 ```
+Open [http://localhost:3000](http://localhost:3000).
 
-Backend:
-
+### Run tests
 ```bash
-npm start
+npm run test            # run once
+npm run test:coverage   # run with coverage report
+```
+
+### Build for production
+```bash
+npm run build
+npm run start
 ```
 
 ---
 
-## 🔑 Environment Variables
+## 🔒 Security Notes
 
-Create a `.env` file in the backend directory:
-
-```env
-MONGODB_URI=
-JWT_SECRET=
-OPENAI_API_KEY=
-GEMINI_API_KEY=
-PORT=
-```
+- Database access is enforced server-side via Supabase Row Level Security — every query on the `assessments` table is scoped to `auth.uid() = user_id`.
+- Authentication uses Supabase's managed Google OAuth and magic-link flows; this app never stores or handles passwords directly.
+- Route-level redirects (e.g. sending a logged-out user to `/auth`) are currently handled client-side. The data itself stays protected by RLS regardless; a server-side session check via Next.js Middleware is a known next step, not yet implemented.
+- Security headers (CSP, X-Frame-Options, X-Content-Type-Options, Referrer-Policy) are configured in `next.config.ts`.
 
 ---
 
-## 📊 User Journey
+## 🎯 Possible Future Enhancements
 
-1. Create an account
-2. Enter daily activities
-3. Calculate carbon footprint
-4. View dashboard analytics
-5. Receive AI-generated recommendations
-6. Set sustainability goals
-7. Track progress over time
-8. Earn achievements and badges
-
----
-
-## 🎯 Future Enhancements
-
-- Real-time carbon tracking
-- Smart wearable integrations
-- IoT energy monitoring
-- Community sustainability challenges
-- Carbon offset marketplace
-- Green product recommendations
-- Advanced AI forecasting
-- Organization-level carbon analytics
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome!
-
-1. Fork the repository
-2. Create a new branch
-
-```bash
-git checkout -b feature/new-feature
-```
-
-3. Commit changes
-
-```bash
-git commit -m "Add new feature"
-```
-
-4. Push changes
-
-```bash
-git push origin feature/new-feature
-```
-
-5. Open a Pull Request
+- Server-side route protection via Next.js Middleware
+- Trend-aware, dynamically-generated insight copy (using actual score history, not just static templates)
+- Expanded test coverage for components and the Supabase service layer
+- Optional integration of an LLM for free-text habit input or richer recommendation generation
 
 ---
 
 ## 📄 License
 
-This project is licensed under the MIT License.
-
-See the LICENSE file for more details.
-
----
-
-## 🌱 Vision
-
-CarbonWise aims to make sustainability measurable, actionable, and accessible for everyone. By combining carbon tracking, intelligent recommendations, and engaging user experiences, we empower individuals to contribute toward a cleaner and greener future—one action at a time.
-
-**Built with ❤️ for a Sustainable Tomorrow**
+This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for details.
