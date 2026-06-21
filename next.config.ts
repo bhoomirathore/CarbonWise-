@@ -1,12 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  webpack: (config, { dev }) => {
-    if (!dev) {
-      config.optimization.minimize = false;
-    }
-    return config;
-  }
+  /* config options here */
 };
 
 export default nextConfig;

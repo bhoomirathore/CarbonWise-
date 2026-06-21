@@ -21,8 +21,18 @@ import {
 
 import { generateInsights } from '@/lib/insightsEngine';
 import { getRankedContributors, getLargestContributor } from '@/lib/contributorUtils';
-import CategoryContributionChart from '@/components/charts/CategoryContributionChart';
-import AssessmentTrendChart from '@/components/charts/AssessmentTrendChart';
+import dynamic from 'next/dynamic';
+
+const CategoryContributionChart = dynamic(
+  () => import('@/components/charts/CategoryContributionChart'),
+  { ssr: false }
+);
+
+const AssessmentTrendChart = dynamic(
+  () => import('@/components/charts/AssessmentTrendChart'),
+  { ssr: false }
+);
+
 import { calculateAchievements } from '@/lib/achievements';
 import { Trophy } from 'lucide-react';
 
