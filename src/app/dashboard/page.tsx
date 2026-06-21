@@ -21,6 +21,10 @@ import {
 
 import { generateInsights } from '@/lib/insightsEngine';
 import { getRankedContributors, getLargestContributor } from '@/lib/contributorUtils';
+import CategoryContributionChart from '@/components/charts/CategoryContributionChart';
+import AssessmentTrendChart from '@/components/charts/AssessmentTrendChart';
+import { calculateAchievements } from '@/lib/achievements';
+import { Trophy } from 'lucide-react';
 
 export default function DashboardPage() {
   const [assessments, setAssessments] = useState<Assessment[]>([]);
@@ -164,8 +168,30 @@ export default function DashboardPage() {
                 </Card>
               </div>
 
+              {/* Visual Analytics Grid */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <Card className="border border-border p-6 bg-white shadow-sm flex flex-col justify-between">
+                  <div>
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">Latest Category Breakdown</h3>
+                    <CategoryContributionChart
+                      transportScore={Number(latest.transport_score || 0)}
+                      energyScore={Number(latest.energy_score || 0)}
+                      dietScore={Number(latest.diet_score || 0)}
+                      wasteScore={Number(latest.waste_score || 0)}
+                    />
+                  </div>
+                </Card>
+
+                <Card className="border border-border p-6 bg-white shadow-sm flex flex-col justify-between">
+                  <div>
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">Assessment History Trend</h3>
+                    <AssessmentTrendChart assessments={assessments} />
+                  </div>
+                </Card>
+              </div>
+
               {/* Quick Insights & Historical Improvement */}
-              <Card className="border-border p-6 bg-white shadow-sm border-l-4 border-l-primary">
+              <Card className="border border-border p-6 bg-white shadow-sm border-l-4 border-l-primary">
                 <h3 className="text-sm font-bold uppercase tracking-wide text-slate-400 mb-3">Quick Insights</h3>
                 <div className="space-y-2 text-sm font-medium text-slate-600">
                   {(() => {
@@ -221,8 +247,75 @@ export default function DashboardPage() {
                       <span>Complete a second assessment in the future to track your footprint changes and improvement history!</span>
                     </p>
                   )}
+                  {assessments.length >= 3 && (() => {
+                    const latestScore = Number(assessments[0].total_score || 0);
+                    const thirdLatestScore = Number(assessments[2].total_score || 0);
+                    const diff3 = thirdLatestScore - latestScore;
+                    if (diff3 > 0) {
+                      return (
+                        <p className="flex items-start space-x-2 text-emerald-600 font-bold">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0 mt-1.5" />
+                          <span>You reduced your footprint by {diff3} points over your last 3 assessments. Keep up the excellent work!</span>
+                        </p>
+                      );
+                    } else if (diff3 < 0) {
+                      return (
+                        <p className="flex items-start space-x-2 text-rose-600 font-bold">
+                          <span className="w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0 mt-1.5" />
+                          <span>Your footprint score increased by {Math.abs(diff3)} points over your last 3 assessments. Try simulator choices to plan your reduction!</span>
+                        </p>
+                      );
+                    } else {
+                      return (
+                        <p className="flex items-start space-x-2 text-slate-500 font-semibold">
+                          <span className="w-1.5 h-1.5 rounded-full bg-slate-400 shrink-0 mt-1.5" />
+                          <span>Your footprint score remained stable over your last 3 assessments.</span>
+                        </p>
+                      );
+                    }
+                  })()}
+                  {assessments.length < 3 && (
+                    <p className="flex items-start space-x-2 text-slate-400">
+                      <span className="w-1.5 h-1.5 rounded-full bg-slate-300 shrink-0 mt-1.5" />
+                      <span>Log at least 3 assessments to unlock long-term footprint improvement trend summaries.</span>
+                    </p>
+                  )}
                 </div>
               </Card>
+
+              {/* Achievements Widget */}
+              <div className="bg-white border border-border rounded-2xl shadow-sm overflow-hidden p-6">
+                <div className="flex items-center space-x-2 mb-4">
+                  <Trophy className="h-5 w-5 text-amber-500" />
+                  <h3 className="text-base font-bold text-foreground">Local Achievements</h3>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {calculateAchievements(assessments).map((ach) => (
+                    <div 
+                      key={ach.id} 
+                      className={`p-4 rounded-xl border transition-all flex flex-col justify-between min-h-[120px] ${
+                        ach.unlocked 
+                          ? 'bg-amber-50/20 border-amber-200/60' 
+                          : 'bg-slate-50/50 border-slate-100'
+                      }`}
+                    >
+                      <div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-2xl">{ach.icon}</span>
+                          {ach.unlocked ? (
+                            <span className="text-[10px] bg-amber-100 text-amber-800 font-extrabold px-2.5 py-0.5 rounded-full">Unlocked</span>
+                          ) : (
+                            <span className="text-[10px] bg-slate-100 text-slate-500 font-bold px-2.5 py-0.5 rounded-full">Locked</span>
+                          )}
+                        </div>
+                        <h4 className="text-sm font-bold text-slate-800 mt-2">{ach.title}</h4>
+                        <p className="text-xs text-slate-500 mt-1 leading-normal">{ach.description}</p>
+                      </div>
+                      <span className="text-[9px] text-slate-400 font-bold mt-2 uppercase tracking-wider">{ach.criteria}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
 
               {/* Recent Assessments History Card */}
               <div className="bg-white border border-border rounded-2xl shadow-sm overflow-hidden">
