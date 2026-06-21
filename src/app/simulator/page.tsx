@@ -185,13 +185,14 @@ export default function SimulatorPage() {
                 <CardContent className="p-6 space-y-6">
                   {/* Transportation Type */}
                   <div className="space-y-2">
-                    <label className="text-sm font-bold text-slate-700 block">Transportation Type</label>
-                    <div className="grid grid-cols-3 gap-2">
+                    <label id="transport-type-label" className="text-sm font-bold text-slate-700 block">Transportation Type</label>
+                    <div role="group" aria-labelledby="transport-type-label" className="grid grid-cols-3 gap-2">
                       {['Car', 'Motorcycle', 'Bus', 'Train', 'Bicycle', 'Walking'].map((type) => (
                         <button
                           key={type}
                           type="button"
                           onClick={() => handleInputChange('transportType', type)}
+                          aria-pressed={inputs.transportType === type}
                           className={`py-2 px-3 text-xs font-semibold rounded-lg border transition-all ${
                             inputs.transportType === type
                               ? 'bg-secondary text-white border-secondary'
@@ -234,13 +235,14 @@ export default function SimulatorPage() {
 
                   {/* Energy Usage */}
                   <div className="space-y-2">
-                    <label className="text-sm font-bold text-slate-700 block">Home Energy Usage</label>
-                    <div className="grid grid-cols-3 gap-2">
+                    <label id="energy-usage-label" className="text-sm font-bold text-slate-700 block">Home Energy Usage</label>
+                    <div role="group" aria-labelledby="energy-usage-label" className="grid grid-cols-3 gap-2">
                       {['Low', 'Medium', 'High'].map((usage) => (
                         <button
                           key={usage}
                           type="button"
                           onClick={() => handleInputChange('energyUsage', usage)}
+                          aria-pressed={inputs.energyUsage === usage}
                           className={`py-2.5 px-3 text-xs font-semibold rounded-lg border transition-all ${
                             inputs.energyUsage === usage
                               ? 'bg-secondary text-white border-secondary'
@@ -255,13 +257,14 @@ export default function SimulatorPage() {
 
                   {/* Diet Type */}
                   <div className="space-y-2">
-                    <label className="text-sm font-bold text-slate-700 block">Diet Type</label>
-                    <div className="grid grid-cols-4 gap-1.5">
+                    <label id="diet-type-label" className="text-sm font-bold text-slate-700 block">Diet Type</label>
+                    <div role="group" aria-labelledby="diet-type-label" className="grid grid-cols-4 gap-1.5">
                       {['Vegan', 'Vegetarian', 'Mixed', 'Heavy Meat'].map((diet) => (
                         <button
                           key={diet}
                           type="button"
                           onClick={() => handleInputChange('dietType', diet)}
+                          aria-pressed={inputs.dietType === diet}
                           className={`py-2 px-1 text-[10px] sm:text-xs font-semibold rounded-lg border transition-all ${
                             inputs.dietType === diet
                               ? 'bg-secondary text-white border-secondary'
@@ -276,13 +279,14 @@ export default function SimulatorPage() {
 
                   {/* Waste Habits */}
                   <div className="space-y-2">
-                    <label className="text-sm font-bold text-slate-700 block">Waste Recycling Habits</label>
-                    <div className="grid grid-cols-3 gap-2">
+                    <label id="waste-habit-label" className="text-sm font-bold text-slate-700 block">Waste Recycling Habits</label>
+                    <div role="group" aria-labelledby="waste-habit-label" className="grid grid-cols-3 gap-2">
                       {['Always Recycle', 'Sometimes Recycle', 'Rarely Recycle'].map((habit) => (
                         <button
                           key={habit}
                           type="button"
                           onClick={() => handleInputChange('wasteHabit', habit)}
+                          aria-pressed={inputs.wasteHabit === habit}
                           className={`py-2 px-1 text-[10px] sm:text-xs font-semibold rounded-lg border transition-all ${
                             inputs.wasteHabit === habit
                               ? 'bg-secondary text-white border-secondary'
